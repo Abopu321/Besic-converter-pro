@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Base Converter Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --secondary-hover: #db2777;
+            --bg-dark: #0f172a;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #f8fafc;
+            --card-dark: #1e293b;
+            --card-light: #ffffff;
+            --error: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --border-dark: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 20px;
+        }
+
+        body.light-mode {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .calculator {
+            background-color: var(--card-dark);
+            padding: 25px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode .calculator {
+            background-color: var(--card-light);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .light-mode .icon-button {
+            color: var(--text-dark);
+        }
+
+        .icon-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode .icon-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-dark);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .light-mode .tabs {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            border-bottom: 2px solid rgba(99, 102, 241, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-dark);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .light-mode input, .light-mode select, .light-mode textarea {
+            border: 1px solid var(--border-light);
+            background-color: rgba(0, 0, 0, 0.02);
+            color: var(--text-dark);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--primary);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .button-group.four-col {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 600px) {
+            .button-group.four-col {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        button {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.secondary {
+            background-color: var(--secondary);
+        }
+
+        button.secondary:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .utility-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .utility-buttons button {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .light-mode .utility-buttons button {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
+        }
+
+        .utility-buttons button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .light-mode .utility-buttons button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .output-container {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .light-mode .output-container {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .output {
+            min-height: 24px;
+            word-break: break-all;
+            font-family: 'Consolas', monospace;
+        }
+
+        .output-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .output-actions button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+
+        .light-mode .output-actions button {
+            color: var(--text-dark);
+        }
+
+        .output-actions button:hover {
+            color: var(--primary);
+            background: none;
+        }
+
+        .history {
+            margin-top: 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .history-search {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .history-search input {
+            padding: 5px 10px;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) rgba(0, 0, 0, 0.2);
+        }
+
+        .light-mode .history-list {
+            background-color: rgba(0, 0, 0, 0.03);
+            scrollbar-color: var(--primary) rgba(0, 0, 0, 0.1);
+        }
+
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-dark);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .light-mode .history-item {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .light-mode .history-item:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .history-item-actions {
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .history-item:hover .history-item-actions {
+            opacity: 1;
+        }
+
+        .history-item-actions button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            padding: 2px;
+            font-size: 0.8rem;
+        }
+
+        .light-mode .history-item-actions button {
+            color: var(--text-dark);
+        }
+
+        .history-item-actions button:hover {
+            color: var(--primary);
+            background: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: var(--success);
+        }
+
+        .notification.error {
+            background-color: var(--error);
+        }
+
+        .notification.info {
+            background-color: var(--info);
+        }
+
+        .notification.warning {
+            background-color: var(--warning);
+        }
+
+        /* Bit visualization */
+        .bit-visualization {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .bit {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            border: 1px solid var(--border-dark);
+            position: relative;
+        }
+
+        .light-mode .bit {
+            border: 1px solid var(--border-light);
+        }
+
+        .bit-0 {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .bit-1 {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .bit-index {
+            position: absolute;
+            top: -20px;
+            font-size: 0.7rem;
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .light-mode .bit-index {
+            color: var(--text-dark);
+        }
+
+        /* Settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .light-mode .setting-item {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .light-mode .toggle-slider {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Keyboard shortcuts */
+        .keyboard-shortcuts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .keyboard-shortcuts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .light-mode .shortcut-item {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .key-combo {
+            display: flex;
+            gap: 5px;
+        }
+
+        .key {
+            padding: 2px 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .light-mode .key {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Floating point visualization */
+        .fp-visualization {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .fp-part {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .fp-label {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .fp-bits {
+            display: flex;
+            gap: 2px;
+        }
+
+        .fp-bit {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            border-radius: 2px;
+        }
+
+        .fp-sign {
+            background-color: var(--error);
+            color: white;
+        }
+
+        .fp-exponent {
+            background-color: var(--warning);
+            color: black;
+        }
+
+        .fp-mantissa {
+            background-color: var(--info);
+            color: white;
+        }
+
+        /* ASCII/Unicode table */
+        .char-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .char-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            border: 1px solid var(--border-dark);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .light-mode .char-item {
+            border: 1px solid var(--border-light);
+        }
+
+        .char-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode .char-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .char-display {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .char-code {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .light-mode .char-code {
+            color: var(--text-dark);
+        }
+
+        /* Cursor animation */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: var(--primary);
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--card-dark);
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+        }
+
+        .light-mode .modal {
+            background-color: var(--card-light);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .light-mode .modal-header {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .light-mode .modal-close {
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            margin-bottom: 15px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-dark);
+        }
+
+        .light-mode .modal-footer {
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Calculator keypad */
+        .calculator-keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .calc-key {
+            padding: 10px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .light-mode .calc-key {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .calc-key:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .light-mode .calc-key:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .calc-key:active {
+            transform: scale(0.95);
+        }
+
+        .calc-key.operator {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .calc-key.operator:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .calc-key.function {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .calc-key.function:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        /* Unit converter */
+        .unit-converter {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .unit-arrow {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--card-dark);
+            color: var(--text-light);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode .tooltip .tooltiptext {
+            background-color: var(--card-light);
+            color: var(--text-dark);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="header">
+            <div class="title-container">
+                <div class="logo"><i class="fas fa-calculator"></i></div>
+                <h2>Base Converter Pro</h2>
+            </div>
+            <div class="header-buttons">
+                <button class="icon-button" id="helpBtn" title="Help">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                <button class="icon-button" id="settingsBtn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="icon-button" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="converter">Base Converter</div>
+            <div class="tab" data-tab="calculator">Calculator</div>
+            <div class="tab" data-tab="bitwise">Bit Operations</div>
+            <div class="tab" data-tab="ascii">ASCII/Unicode</div>
+            <div class="tab" data-tab="floating">Floating Point</div>
+            <div class="tab" data-tab="units">Unit Converter</div>
+        </div>
+
+        <!-- Base Converter Tab -->
+        <div class="tab-content active" id="converter">
+            <div class="input-group">
+                <label for="input">Enter Number:</label>
+                <input type="text" id="input" placeholder="Enter a number">
+            </div>
+
+            <div class="input-group">
+                <label for="fromBase">From Base:</label>
+                <select id="fromBase">
+                    <option value="2">Binary (2)</option>
+                    <option value="8">Octal (8)</option>
+                    <option value="10" selected>Decimal (10)</option>
+                    <option value="16">Hexadecimal (16)</option>
+                    <option value="custom">Custom Base</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="customBaseInput" style="display: none;">
+                <label for="customBase">Custom Base (2-36):</label>
+                <input type="number" id="customBase" min="2" max="36" value="2">
+            </div>
+
+            <div class="button-group four-col">
+                <button onclick="convert(2)"><i class="fas fa-binary"></i> Binary</button>
+                <button onclick="convert(8)"><i class="fas fa-hashtag"></i> Octal</button>
+                <button onclick="convert(10)"><i class="fas fa-sort-numeric-up"></i> Decimal</button>
+                <button onclick="convert(16)"><i class="fas fa-code"></i> Hexadecimal</button>
+            </div>
+
+            <div class="utility-buttons">
+                <button onclick="clearInput()"><i class="fas fa-trash"></i> Clear</button>
+                <button onclick="showCustomConversion()"><i class="fas fa-cogs"></i> Custom Base</button>
+                <button onclick="toggleGrouping()"><i class="fas fa-layer-group"></i> Toggle Grouping</button>
+            </div>
+
+            <div class="output-container">
+                <div class="output" id="output"></div>
+                <div class="output-actions" id="outputActions" style="display: none;">
+                    <button id="copyBtn" title="Copy to Clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button id="exportBtn" title="Export Results">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button id="shareBtn" title="Share Results">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bit-visualization" id="bitVisualization"></div>
+        </div>
+
+        <!-- Calculator Tab -->
+        <div class="tab-content" id="calculator">
+            <div class="input-group">
+                <label for="calcExpression">Expression:</label>
+                <input type="text" id="calcExpression" placeholder="Enter expression (e.g., 0b1010 + 0xFF)">
+            </div>
+
+            <div class="input-group">
+                <label for="calcBase">Result Base:</label>
+                <select id="calcBase">
+                    <option value="2">Binary (2)</option>
+                    <option value="8">Octal (8)</option>
+                    <option value="10" selected>Decimal (10)</option>
+                    <option value="16">Hexadecimal (16)</option>
+                </select>
+            </div>
+
+            <button onclick="calculateExpression()"><i class="fas fa-equals"></i> Calculate</button>
+
+            <div class="output-container">
+                <div class="output" id="calcOutput"></div>
+            </div>
+
+            <div class="calculator-keypad">
+                <div class="calc-key" onclick="appendToCalc('7')">7</div>
+                <div class="calc-key" onclick="appendToCalc('8')">8</div>
+                <div class="calc-key" onclick="appendToCalc('9')">9</div>
+                <div class="calc-key operator" onclick="appendToCalc('+')">+</div>
+                <div class="calc-key" onclick="appendToCalc('4')">4</div>
+                <div class="calc-key" onclick="appendToCalc('5')">5</div>
+                <div class="calc-key" onclick="appendToCalc('6')">6</div>
+                <div class="calc-key operator" onclick="appendToCalc('-')">-</div>
+                <div class="calc-key" onclick="appendToCalc('1')">1</div>
+                <div class="calc-key" onclick="appendToCalc('2')">2</div>
+                <div class="calc-key" onclick="appendToCalc('3')">3</div>
+                <div class="calc-key operator" onclick="appendToCalc('*')">×</div>
+                <div class="calc-key" onclick="appendToCalc('0')">0</div>
+                <div class="calc-key" onclick="appendToCalc('.')">.</div>
+                <div class="calc-key function" onclick="calculateExpression()">=</div>
+                <div class="calc-key operator" onclick="appendToCalc('/')">/</div>
+                <div class="calc-key function" onclick="appendToCalc('0b')">0b</div>
+                <div class="calc-key function" onclick="appendToCalc('0x')">0x</div>
+                <div class="calc-key function" onclick="appendToCalc('0o')">0o</div>
+                <div class="calc-key function" onclick="clearCalc()">C</div>
+            </div>
+        </div>
+
+        <!-- Bit Operations Tab -->
+        <div class="tab-content" id="bitwise">
+            <div class="input-group">
+                <label for="bitwiseInput1">First Number:</label>
+                <input type="text" id="bitwiseInput1" placeholder="Enter first number">
+            </div>
+
+            <div class="input-group">
+                <label for="bitwiseBase1">Base:</label>
+                <select id="bitwiseBase1">
+                    <option value="2">Binary (2)</option>
+                    <option value="8">Octal (8)</option>
+                    <option value="10" selected>Decimal (10)</option>
+                    <option value="16">Hexadecimal (16)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="bitwiseInput2">Second Number (for binary operations):</label>
+                <input type="text" id="bitwiseInput2" placeholder="Enter second number">
+            </div>
+
+            <div class="input-group">
+                <label for="bitwiseBase2">Base:</label>
+                <select id="bitwiseBase2">
+                    <option value="2">Binary (2)</option>
+                    <option value="8">Octal (8)</option>
+                    <option value="10" selected>Decimal (10)</option>
+                    <option value="16">Hexadecimal (16)</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button onclick="bitwiseOperation('AND')"><i class="fas fa-ampersand"></i> AND</button>
+                <button onclick="bitwiseOperation('OR')"><i class="fas fa-bars"></i> OR</button>
+                <button onclick="bitwiseOperation('XOR')"><i class="fas fa-times"></i> XOR</button>
+                <button onclick="bitwiseOperation('NOT')"><i class="fas fa-exclamation"></i> NOT</button>
+                <button onclick="bitwiseOperation('SHIFT_LEFT')"><i class="fas fa-angle-double-left"></i> Shift Left</button>
+                <button onclick="bitwiseOperation('SHIFT_RIGHT')"><i class="fas fa-angle-double-right"></i> Shift Right</button>
+                <button onclick="bitwiseOperation('ROTATE_LEFT')"><i class="fas fa-undo"></i> Rotate Left</button>
+                <button onclick="bitwiseOperation('ROTATE_RIGHT')"><i class="fas fa-redo"></i> Rotate Right</button>
+            </div>
+
+            <div class="output-container">
+                <div class="output" id="bitwiseOutput"></div>
+            </div>
+
+            <div class="bit-visualization" id="bitwiseVisualization"></div>
+        </div>
+
+        <!-- ASCII/Unicode Tab -->
+        <div class="tab-content" id="ascii">
+            <div class="input-group">
+                <label for="asciiInput">Text or Code Points:</label>
+                <input type="text" id="asciiInput" placeholder="Enter text or code points">
+            </div>
+
+            <div class="button-group">
+                <button onclick="convertToASCII()"><i class="fas fa-font"></i> Text to ASCII</button>
+                <button onclick="convertFromASCII()"><i class="fas fa-keyboard"></i> ASCII to Text</button>
+                <button onclick="convertToUnicode()"><i class="fas fa-globe"></i> Text to Unicode</button>
+                <button onclick="convertFromUnicode()"><i class="fas fa-language"></i> Unicode to Text</button>
+            </div>
+
+            <div class="output-container">
+                <div class="output" id="asciiOutput"></div>
+            </div>
+
+            <div class="char-table" id="charTable"></div>
+        </div>
+
+        <!-- Floating Point Tab -->
+        <div class="tab-content" id="floating">
+            <div class="input-group">
+                <label for="floatInput">Floating Point Number:</label>
+                <input type="text" id="floatInput" placeholder="Enter a decimal number (e.g., 3.14)">
+            </div>
+
+            <div class="button-group">
+                <button onclick="analyzeFloat('float32')"><i class="fas fa-microchip"></i> IEEE 754 (32-bit)</button>
+                <button onclick="analyzeFloat('float64')"><i class="fas fa-microchip"></i> IEEE 754 (64-bit)</button>
+            </div>
+
+            <div class="output-container">
+                <div class="output" id="floatOutput"></div>
+            </div>
+
+            <div class="fp-visualization" id="fpVisualization"></div>
+        </div>
+
+        <!-- Unit Converter Tab -->
+        <div class="tab-content" id="units">
+            <div class="input-group">
+                <label for="unitInput">Value:</label>
+                <input type="text" id="unitInput" placeholder="Enter a value">
+            </div>
+
+            <div class="unit-converter">
+                <div>
+                    <label for="fromUnit">From:</label>
+                    <select id="fromUnit">
+                        <optgroup label="Data Storage">
+                            <option value="bit">Bit</option>
+                            <option value="byte">Byte</option>
+                            <option value="kilobyte">Kilobyte (KB)</option>
+                            <option value="megabyte">Megabyte (MB)</option>
+                            <option value="gigabyte">Gigabyte (GB)</option>
+                            <option value="terabyte">Terabyte (TB)</option>
+                        </optgroup>
+                        <optgroup label="Data Transfer">
+                            <option value="bps">Bits per second (bps)</option>
+                            <option value="kbps">Kilobits per second (Kbps)</option>
+                            <option value="mbps">Megabits per second (Mbps)</option>
+                            <option value="gbps">Gigabits per second (Gbps)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="unit-arrow">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div>
+                    <label for="toUnit">To:</label>
+                    <select id="toUnit">
+                        <optgroup label="Data Storage">
+                            <option value="bit">Bit</option>
+                            <option value="byte">Byte</option>
+                            <option value="kilobyte">Kilobyte (KB)</option>
+                            <option value="megabyte">Megabyte (MB)</option>
+                            <option value="gigabyte">Gigabyte (GB)</option>
+                            <option value="terabyte">Terabyte (TB)</option>
+                        </optgroup>
+                        <optgroup label="Data Transfer">
+                            <option value="bps">Bits per second (bps)</option>
+                            <option value="kbps">Kilobits per second (Kbps)</option>
+                            <option value="mbps">Megabits per second (Mbps)</option>
+                            <option value="gbps">Gigabits per second (Gbps)</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="convertUnit()" style="margin-top: 15px;"><i class="fas fa-exchange-alt"></i> Convert</button>
+
+            <div class="output-container">
+                <div class="output" id="unitOutput"></div>
+            </div>
+        </div>
+
+        <div class="history">
+            <div class="history-header">
+                <h3>Conversion History</h3>
+                <div class="history-search">
+                    <input type="text" id="historySearch" placeholder="Search history...">
+                    <button class="icon-button" onclick="clearHistory()" title="Clear History">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Help & Keyboard Shortcuts</div>
+                <button class="modal-close" onclick="closeModal('helpModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Keyboard Shortcuts</h4>
+                <div class="keyboard-shortcuts">
+                    <div class="shortcut-item">
+                        <span>Convert to Binary</span>
+                        <div class="key-combo">
+                            <span class="key">Alt</span>
+                            <span>+</span>
+                            <span class="key">B</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Convert to Decimal</span>
+                        <div class="key-combo">
+                            <span class="key">Alt</span>
+                            <span>+</span>
+                            <span class="key">D</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Convert to Hex</span>
+                        <div class="key-combo">
+                            <span class="key">Alt</span>
+                            <span>+</span>
+                            <span class="key">H</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Clear Input</span>
+                        <div class="key-combo">
+                            <span class="key">Alt</span>
+                            <span>+</span>
+                            <span class="key">C</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Copy Result</span>
+                        <div class="key-combo">
+                            <span class="key">Alt</span>
+                            <span>+</span>
+                            <span class="key">S</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Toggle Theme</span>
+                        <div class="key-combo">
+                            <span class="key">Alt</span>
+                            <span>+</span>
+                            <span class="key">T</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 20px;">Number Format Prefixes</h4>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li><strong>0b</strong> - Binary (e.g., 0b1010)</li>
+                    <li><strong>0o</strong> - Octal (e.g., 0o12)</li>
+                    <li><strong>0x</strong> - Hexadecimal (e.g., 0xFF)</li>
+                </ul>
+
+                <h4 style="margin-top: 20px;">Tips</h4>
+                <ul style="padding-left: 20px; margin-top: 10px;">
+                    <li>Click on history items to reuse previous conversions</li>
+                    <li>Use the calculator tab for mixed-base arithmetic</li>
+                    <li>Hover over buttons for tooltips</li>
+                    <li>Use digit grouping for better readability of large numbers</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <span>Dark Mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Digit Grouping</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="digitGroupingToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Typing Animation</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="typingAnimationToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Save History</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="saveHistoryToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Bit Visualization</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="bitVisualizationToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Keyboard Shortcuts</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="keyboardShortcutsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top: 20px;">
+                    <label for="digitGroupSize">Digit Group Size:</label>
+                    <select id="digitGroupSize">
+                        <option value="4">4 (Nibble)</option>
+                        <option value="8">8 (Byte)</option>
+                        <option value="3">3 (Thousands)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="maxHistoryItems">Max History Items:</label>
+                    <input type="number" id="maxHistoryItems" min="5" max="100" value="20">
+                </div>
+
+                <button onclick="saveSettings()" style="margin-top: 15px;"><i class="fas fa-save"></i> Save Settings</button>
+                <button onclick="resetSettings()" style="margin-top: 10px; background-color: var(--error);"><i class="fas fa-undo"></i> Reset to Defaults</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Export Results</div>
+                <button class="modal-close" onclick="closeModal('exportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="exportFormat">Format:</label>
+                    <select id="exportFormat">
+                        <option value="text">Plain Text</option>
+                        <option value="json">JSON</option>
+                        <option value="csv">CSV</option>
+                        <option value="html">HTML</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="exportContent">Content:</label>
+                    <select id="exportContent">
+                        <option value="current">Current Result</option>
+                        <option value="history">Conversion History</option>
+                        <option value="all">All Results</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="exportPreview">Preview:</label>
+                    <textarea id="exportPreview" rows="6" readonly></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button onclick="downloadExport()"><i class="fas fa-download"></i> Download</button>
+                    <button onclick="copyExport()"><i class="fas fa-copy"></i> Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // DOM Elements
+        const inputEl = document.getElementById('input');
+        const outputEl = document.getElementById('output');
+        const fromBaseEl = document.getElementById('fromBase');
+        const customBaseInputEl = document.getElementById('customBaseInput');
+        const customBaseEl = document.getElementById('customBase');
+        const outputActionsEl = document.getElementById('outputActions');
+        const copyBtnEl = document.getElementById('copyBtn');
+        const exportBtnEl = document.getElementById('exportBtn');
+        const shareBtnEl = document.getElementById('shareBtn');
+        const historyListEl = document.getElementById('historyList');
+        const historySearchEl = document.getElementById('historySearch');
+        const notificationEl = document.getElementById('notification');
+        const themeToggleEl = document.getElementById('themeToggle');
+        const bitVisualizationEl = document.getElementById('bitVisualization');
+        const helpBtnEl = document.getElementById('helpBtn');
+        const settingsBtnEl = document.getElementById('settingsBtn');
+        const tabEls = document.querySelectorAll('.tab');
+        const tabContentEls = document.querySelectorAll('.tab-content');
+        const darkModeToggleEl = document.getElementById('darkModeToggle');
+        const digitGroupingToggleEl = document.getElementById('digitGroupingToggle');
+        const typingAnimationToggleEl = document.getElementById('typingAnimationToggle');
+        const saveHistoryToggleEl = document.getElementById('saveHistoryToggle');
+        const bitVisualizationToggleEl = document.getElementById('bitVisualizationToggle');
+        const keyboardShortcutsToggleEl = document.getElementById('keyboardShortcutsToggle');
+        const digitGroupSizeEl = document.getElementById('digitGroupSize');
+        const maxHistoryItemsEl = document.getElementById('maxHistoryItems');
+        const calcExpressionEl = document.getElementById('calcExpression');
+        const calcOutputEl = document.getElementById('calcOutput');
+        const bitwiseInput1El = document.getElementById('bitwiseInput1');
+        const bitwiseInput2El = document.getElementById('bitwiseInput2');
+        const bitwiseOutputEl = document.getElementById('bitwiseOutput');
+        const bitwiseVisualizationEl = document.getElementById('bitwiseVisualization');
+        const asciiInputEl = document.getElementById('asciiInput');
+        const asciiOutputEl = document.getElementById('asciiOutput');
+        const charTableEl = document.getElementById('charTable');
+        const floatInputEl = document.getElementById('floatInput');
+        const floatOutputEl = document.getElementById('floatOutput');
+        const fpVisualizationEl = document.getElementById('fpVisualization');
+        const unitInputEl = document.getElementById('unitInput');
+        const unitOutputEl = document.getElementById('unitOutput');
+        const fromUnitEl = document.getElementById('fromUnit');
+        const toUnitEl = document.getElementById('toUnit');
+        const exportFormatEl = document.getElementById('exportFormat');
+        const exportContentEl = document.getElementById('exportContent');
+        const exportPreviewEl = document.getElementById('exportPreview');
+
+        // Initialize settings
+        let settings = {
+            darkMode: true,
+            digitGrouping: false,
+            typingAnimation: true,
+            saveHistory: true,
+            bitVisualization: true,
+            keyboardShortcuts: true,
+            digitGroupSize: 4,
+            maxHistoryItems: 20
+        };
+
+        // Initialize history array
+        let conversionHistory = [];
+        
+        // Load settings and history from localStorage
+        loadSettings();
+        updateHistoryDisplay();
+
+        // Event Listeners
+        fromBaseEl.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customBaseInputEl.style.display = 'block';
+            } else {
+                customBaseInputEl.style.display = 'none';
+            }
+        });
+
+        copyBtnEl.addEventListener('click', copyToClipboard);
+        exportBtnEl.addEventListener('click', () => openModal('exportModal'));
+        shareBtnEl.addEventListener('click', shareResults);
+        themeToggleEl.addEventListener('click', toggleTheme);
+        helpBtnEl.addEventListener('click', () => openModal('helpModal'));
+        settingsBtnEl.addEventListener('click', () => openModal('settingsModal'));
+        
+        historySearchEl.addEventListener('input', function() {
+            filterHistory(this.value);
+        });
+
+        // Tab navigation
+        tabEls.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+
+        // Keyboard shortcuts
+        if (settings.keyboardShortcuts) {
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        // Settings event listeners
+        darkModeToggleEl.addEventListener('change', function() {
+            settings.darkMode = this.checked;
+            applyTheme();
+        });
+
+        // Initialize ASCII/Unicode table
+        populateASCIITable();
+
+        // Functions
+        function convert(toBase) {
+            try {
+                const input = inputEl.value.trim();
+                if (!input) {
+                    showNotification('Please enter a number', 'error');
+                    return;
+                }
+
+                let fromBase = parseInt(fromBaseEl.value);
+                if (fromBaseEl.value === 'custom') {
+                    fromBase = parseInt(customBaseEl.value);
+                    if (fromBase < 2 || fromBase > 36) {
+                        showNotification('Custom base must be between 2 and 36', 'error');
+                        return;
+                    }
+                }
+
+                // Convert the input to decimal first
+                const decimal = parseInt(input, fromBase);
+                
+                if (isNaN(decimal)) {
+                    showNotification('Invalid number for the selected base', 'error');
+                    return;
+                }
+
+                // Then convert from decimal to target base
+                let result = decimal.toString(toBase);
+                
+                // Apply digit grouping if enabled
+                if (settings.digitGrouping) {
+                    result = groupDigits(result, settings.digitGroupSize);
+                }
+                
+                // Format the result based on the base
+                let formattedResult = result;
+                if (toBase === 2) formattedResult = `Binary: ${result}`;
+                else if (toBase === 8) formattedResult = `Octal: ${result}`;
+                else if (toBase === 10) formattedResult = `Decimal: ${result}`;
+                else if (toBase === 16) formattedResult = `Hexadecimal: ${result.toUpperCase()}`;
+                else formattedResult = `Base ${toBase}: ${result}`;
+
+                // Display the result
+                if (settings.typingAnimation) {
+                    typeLineByLine(formattedResult, 'output');
+                } else {
+                    outputEl.textContent = formattedResult;
+                }
+                
+                // Show output actions
+                outputActionsEl.style.display = 'flex';
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(input, fromBase, result, toBase);
+                }
+                
+                // Show bit visualization if enabled
+                if (settings.bitVisualization) {
+                    visualizeBits(decimal, 'bitVisualization');
+                }
+                
+            } catch (error) {
+                showNotification('Conversion error: ' + error.message, 'error');
+            }
+        }
+
+        function showCustomConversion() {
+            const customBaseModal = prompt('Enter the target base (2-36):', '32');
+            const customBase = parseInt(customBaseModal);
+            
+            if (customBase && customBase >= 2 && customBase <= 36) {
+                convert(customBase);
+            } else if (customBaseModal !== null) {
+                showNotification('Base must be between 2 and 36', 'error');
+            }
+        }
+
+        function typeLineByLine(text, elementId) {
+            let i = 0;
+            let element = document.getElementById(elementId);
+            element.innerHTML = '<span class="cursor"></span>'; // Start with just the cursor
+            
+            const interval = setInterval(function() {
+                if (i < text.length) {
+                    // Replace the element content with the text up to index i plus the cursor
+                    element.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+                    i++;
+                } else {
+                    // When done, remove the cursor
+                    element.innerHTML = text;
+                    clearInterval(interval);
+                }
+            }, 30); // Adjust typing speed (milliseconds)
+        }
+
+        function clearInput() {
+            inputEl.value = '';
+            outputEl.innerHTML = '';
+            outputActionsEl.style.display = 'none';
+            bitVisualizationEl.innerHTML = '';
+            inputEl.focus();
+        }
+
+        function copyToClipboard() {
+            // Extract just the result part (after the colon and space)
+            const outputText = outputEl.innerText;
+            const resultText = outputText.includes(':') ? 
+                outputText.split(': ')[1] : 
+                outputText;
+            
+            navigator.clipboard.writeText(resultText).then(() => {
+                showNotification('Copied to clipboard!', 'success');
+            }).catch(err => {
+                showNotification('Failed to copy: ' + err, 'error');
+            });
+        }
+
+        function addToHistory(input, fromBase, result, toBase) {
+            const historyItem = {
+                input,
+                fromBase,
+                result,
+                toBase,
+                timestamp: new Date().toLocaleTimeString(),
+                date: new Date().toLocaleDateString()
+            };
+            
+            conversionHistory.unshift(historyItem);
+            
+            // Keep only the max number of items
+            if (conversionHistory.length > settings.maxHistoryItems) {
+                conversionHistory.pop();
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+            
+            // Update the display
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            historyListEl.innerHTML = '';
+            
+            if (conversionHistory.length === 0) {
+                historyListEl.innerHTML = '<div class="history-item">No conversion history yet</div>';
+                return;
+            }
+            
+            conversionHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div>
+                        <span>${item.timestamp}</span>: 
+                        <strong>${item.input}</strong> (Base ${item.fromBase}) → 
+                        <strong>${item.result}</strong> (Base ${item.toBase})
+                    </div>
+                    <div class="history-item-actions">
+                        <button title="Reuse"><i class="fas fa-redo"></i></button>
+                        <button title="Delete" onclick="removeHistoryItem(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                // Add click event to reuse this conversion
+                historyItem.addEventListener('click', (e) => {
+                    // Don't trigger if clicking on the delete button
+                    if (e.target.closest('.history-item-actions')) return;
+                    
+                    inputEl.value = item.input;
+                    fromBaseEl.value = item.fromBase === parseInt(item.fromBase) ? item.fromBase : 'custom';
+                    
+                    if (fromBaseEl.value === 'custom') {
+                        customBaseInputEl.style.display = 'block';
+                        customBaseEl.value = item.fromBase;
+                    }
+                    
+                    // Highlight the selected history item
+                    document.querySelectorAll('.history-item').forEach(el => {
+                        el.style.backgroundColor = '';
+                    });
+                    historyItem.style.backgroundColor = 'rgba(99, 102, 241, 0.1)';
+                });
+                
+                historyListEl.appendChild(historyItem);
+            });
+        }
+
+        function removeHistoryItem(index) {
+            conversionHistory.splice(index, 1);
+            localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+            updateHistoryDisplay();
+        }
+
+        function filterHistory(query) {
+            if (!query) {
+                updateHistoryDisplay();
+                return;
+            }
+            
+            const filteredHistory = conversionHistory.filter(item => 
+                item.input.includes(query) || 
+                item.result.includes(query) || 
+                item.fromBase.toString().includes(query) || 
+                item.toBase.toString().includes(query)
+            );
+            
+            historyListEl.innerHTML = '';
+            
+            if (filteredHistory.length === 0) {
+                historyListEl.innerHTML = '<div class="history-item">No matching results</div>';
+                return;
+            }
+            
+            filteredHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div>
+                        <span>${item.timestamp}</span>: 
+                        <strong>${item.input}</strong> (Base ${item.fromBase}) → 
+                        <strong>${item.result}</strong> (Base ${item.toBase})
+                    </div>
+                    <div class="history-item-actions">
+                        <button title="Reuse"><i class="fas fa-redo"></i></button>
+                        <button title="Delete" onclick="removeHistoryItem(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                // Add click event to reuse this conversion
+                historyItem.addEventListener('click', (e) => {
+                    // Don't trigger if clicking on the delete button
+                    if (e.target.closest('.history-item-actions')) return;
+                    
+                    inputEl.value = item.input;
+                    fromBaseEl.value = item.fromBase === parseInt(item.fromBase) ? item.fromBase : 'custom';
+                    
+                    if (fromBaseEl.value === 'custom') {
+                        customBaseInputEl.style.display = 'block';
+                        customBaseEl.value = item.fromBase;
+                    }
+                });
+                
+                historyListEl.appendChild(historyItem);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all conversion history?')) {
+                conversionHistory = [];
+                localStorage.removeItem('conversionHistory');
+                updateHistoryDisplay();
+                showNotification('History cleared', 'info');
+            }
+        }
+
+        function showNotification(message, type) {
+            notificationEl.textContent = message;
+            notificationEl.className = `notification ${type}`;
+            notificationEl.classList.add('show');
+            
+            setTimeout(() => {
+                notificationEl.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleTheme() {
+            settings.darkMode = !settings.darkMode;
+            applyTheme();
+            saveSettings();
+        }
+
+        function applyTheme() {
+            if (settings.darkMode) {
+                document.body.classList.remove('light-mode');
+                themeToggleEl.innerHTML = '<i class="fas fa-sun"></i>';
+                darkModeToggleEl.checked = true;
+            } else {
+                document.body.classList.add('light-mode');
+                themeToggleEl.innerHTML = '<i class="fas fa-moon"></i>';
+                darkModeToggleEl.checked = false;
+            }
+        }
+
+        function toggleGrouping() {
+            settings.digitGrouping = !settings.digitGrouping;
+            digitGroupingToggleEl.checked = settings.digitGrouping;
+            saveSettings();
+            
+            // Re-convert with the new setting
+            if (outputEl.textContent) {
+                const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+                if (activeTab === 'converter') {
+                    convert(parseInt(document.querySelector('.tab-content.active .button-group button:first-child').getAttribute('onclick').match(/\d+/)[0]));
+                }
+            }
+            
+            showNotification(`Digit grouping ${settings.digitGrouping ? 'enabled' : 'disabled'}`, 'info');
+        }
+
+        function groupDigits(str, size) {
+            if (!str) return str;
+            
+            // Don't group if it's a prefix like 0x, 0b, etc.
+            if (str.startsWith('0x') || str.startsWith('0b') || str.startsWith('0o')) {
+                const prefix = str.substring(0, 2);
+                const value = str.substring(2);
+                return prefix + groupDigits(value, size);
+            }
+            
+            // Split by decimal point if present
+            const parts = str.split('.');
+            const integerPart = parts[0];
+            
+            // Group the integer part
+            const grouped = integerPart.replace(new RegExp(`(.{${size}})(?!$)`, 'g'), '$1_');
+            
+            // Add back the decimal part if it exists
+            return parts.length > 1 ? `${grouped}.${parts[1]}` : grouped;
+        }
+
+        function visualizeBits(number, elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            
+            // Convert to binary and pad to multiple of 8 bits
+            let binary = number.toString(2);
+            const padding = 8 - (binary.length % 8);
+            if (padding < 8) {
+                binary = '0'.repeat(padding) + binary;
+            }
+            
+            // Create bit visualization
+            for (let i = 0; i < binary.length; i++) {
+                const bit = document.createElement('div');
+                bit.className = `bit bit-${binary[i]}`;
+                bit.textContent = binary[i];
+                
+                // Add bit index
+                const index = document.createElement('div');
+                index.className = 'bit-index';
+                index.textContent = binary.length - i - 1;
+                bit.appendChild(index);
+                
+                element.appendChild(bit);
+                
+                // Add space after every 8 bits for readability
+                if ((i + 1) % 8 === 0 && i < binary.length - 1) {
+                    const space = document.createElement('div');
+                    space.style.width = '10px';
+                    element.appendChild(space);
+                }
+            }
+        }
+
+        function switchTab(tabId) {
+            // Hide all tabs
+            tabEls.forEach(tab => tab.classList.remove('active'));
+            tabContentEls.forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function loadSettings() {
+            const savedSettings = JSON.parse(localStorage.getItem('converterSettings'));
+            if (savedSettings) {
+                settings = { ...settings, ...savedSettings };
+            }
+            
+            // Apply settings to UI
+            applyTheme();
+            digitGroupingToggleEl.checked = settings.digitGrouping;
+            typingAnimationToggleEl.checked = settings.typingAnimation;
+            saveHistoryToggleEl.checked = settings.saveHistory;
+            bitVisualizationToggleEl.checked = settings.bitVisualization;
+            keyboardShortcutsToggleEl.checked = settings.keyboardShortcuts;
+            digitGroupSizeEl.value = settings.digitGroupSize;
+            maxHistoryItemsEl.value = settings.maxHistoryItems;
+            
+            // Load history
+            if (settings.saveHistory) {
+                const savedHistory = JSON.parse(localStorage.getItem('conversionHistory'));
+                if (savedHistory) {
+                    conversionHistory = savedHistory;
+                }
+            }
+        }
+
+        function saveSettings() {
+            settings.digitGrouping = digitGroupingToggleEl.checked;
+            settings.typingAnimation = typingAnimationToggleEl.checked;
+            settings.saveHistory = saveHistoryToggleEl.checked;
+            settings.bitVisualization = bitVisualizationToggleEl.checked;
+            settings.keyboardShortcuts = keyboardShortcutsToggleEl.checked;
+            settings.digitGroupSize = parseInt(digitGroupSizeEl.value);
+            settings.maxHistoryItems = parseInt(maxHistoryItemsEl.value);
+            
+            localStorage.setItem('converterSettings', JSON.stringify(settings));
+            
+            // Update keyboard shortcuts
+            if (settings.keyboardShortcuts) {
+                document.addEventListener('keydown', handleKeyboardShortcuts);
+            } else {
+                document.removeEventListener('keydown', handleKeyboardShortcuts);
+            }
+            
+            closeModal('settingsModal');
+            showNotification('Settings saved', 'success');
+        }
+
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                localStorage.removeItem('converterSettings');
+                settings = {
+                    darkMode: true,
+                    digitGrouping: false,
+                    typingAnimation: true,
+                    saveHistory: true,
+                    bitVisualization: true,
+                    keyboardShortcuts: true,
+                    digitGroupSize: 4,
+                    maxHistoryItems: 20
+                };
+                
+                // Apply default settings to UI
+                applyTheme();
+                digitGroupingToggleEl.checked = settings.digitGrouping;
+                typingAnimationToggleEl.checked = settings.typingAnimation;
+                saveHistoryToggleEl.checked = settings.saveHistory;
+                bitVisualizationToggleEl.checked = settings.bitVisualization;
+                keyboardShortcutsToggleEl.checked = settings.keyboardShortcuts;
+                digitGroupSizeEl.value = settings.digitGroupSize;
+                maxHistoryItemsEl.value = settings.maxHistoryItems;
+                
+                showNotification('Settings reset to defaults', 'info');
+            }
+        }
+
+        function handleKeyboardShortcuts(e) {
+            // Only handle Alt key combinations
+            if (e.altKey) {
+                switch (e.key.toLowerCase()) {
+                    case 'b':
+                        e.preventDefault();
+                        convert(2);
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        convert(10);
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        convert(16);
+                        break;
+                    case 'c':
+                        e.preventDefault();
+                        clearInput();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        copyToClipboard();
+                        break;
+                    case 't':
+                        e.preventDefault();
+                        toggleTheme();
+                        break;
+                }
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            
+            // Prepare export preview if opening export modal
+            if (modalId === 'exportModal') {
+                updateExportPreview();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Calculator functions
+        function calculateExpression() {
+            try {
+                const expression = calcExpressionEl.value;
+                if (!expression) {
+                    showNotification('Please enter an expression', 'error');
+                    return;
+                }
+                
+                // Replace binary, octal, and hex literals with their decimal values
+                const processedExpression = expression
+                    .replace(/0b[01]+/g, match => parseInt(match, 2))
+                    .replace(/0o[0-7]+/g, match => parseInt(match, 8))
+                    .replace(/0x[0-9a-f]+/gi, match => parseInt(match, 16));
+                
+                // Evaluate the expression
+                const result = eval(processedExpression);
+                
+                if (isNaN(result)) {
+                    showNotification('Invalid expression', 'error');
+                    return;
+                }
+                
+                // Convert to the selected base
+                const base = parseInt(document.getElementById('calcBase').value);
+                let formattedResult = result.toString(base);
+                
+                // Apply digit grouping if enabled
+                if (settings.digitGrouping) {
+                    formattedResult = groupDigits(formattedResult, settings.digitGroupSize);
+                }
+                
+                // Format the result based on the base
+                let outputText = '';
+                if (base === 2) outputText = `Binary: ${formattedResult}`;
+                else if (base === 8) outputText = `Octal: ${formattedResult}`;
+                else if (base === 10) outputText = `Decimal: ${formattedResult}`;
+                else if (base === 16) outputText = `Hexadecimal: ${formattedResult.toUpperCase()}`;
+                
+                // Display the result
+                if (settings.typingAnimation) {
+                    typeLineByLine(outputText, 'calcOutput');
+                } else {
+                    calcOutputEl.textContent = outputText;
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(expression, 'expression', formattedResult, base);
+                }
+                
+            } catch (error) {
+                showNotification('Calculation error: ' + error.message, 'error');
+            }
+        }
+
+        function appendToCalc(value) {
+            calcExpressionEl.value += value;
+            calcExpressionEl.focus();
+        }
+
+        function clearCalc() {
+            calcExpressionEl.value = '';
+            calcOutputEl.textContent = '';
+            calcExpressionEl.focus();
+        }
+
+        // Bitwise operations
+        function bitwiseOperation(operation) {
+            try {
+                const input1 = bitwiseInput1El.value.trim();
+                if (!input1) {
+                    showNotification('Please enter the first number', 'error');
+                    return;
+                }
+                
+                const base1 = parseInt(document.getElementById('bitwiseBase1').value);
+                const num1 = parseInt(input1, base1);
+                
+                if (isNaN(num1)) {
+                    showNotification('Invalid first number', 'error');
+                    return;
+                }
+                
+                let result;
+                let description;
+                
+                switch (operation) {
+                    case 'NOT':
+                        result = ~num1;
+                        description = `NOT ${input1} (Base ${base1})`;
+                        break;
+                    case 'SHIFT_LEFT':
+                        const shiftLeft = prompt('Enter number of bits to shift left:', '1');
+                        if (shiftLeft === null) return;
+                        const shiftLeftValue = parseInt(shiftLeft);
+                        result = num1 << shiftLeftValue;
+                        description = `${input1} (Base ${base1}) << ${shiftLeftValue}`;
+                        break;
+                    case 'SHIFT_RIGHT':
+                        const shiftRight = prompt('Enter number of bits to shift right:', '1');
+                        if (shiftRight === null) return;
+                        const shiftRightValue = parseInt(shiftRight);
+                        result = num1 >> shiftRightValue;
+                        description = `${input1} (Base ${base1}) >> ${shiftRightValue}`;
+                        break;
+                    case 'ROTATE_LEFT':
+                        const rotateLeft = prompt('Enter number of bits to rotate left:', '1');
+                        if (rotateLeft === null) return;
+                        const rotateLeftValue = parseInt(rotateLeft);
+                        // Implement bit rotation (JavaScript doesn't have built-in rotation)
+                        const bitLength = 32; // Assume 32-bit integers
+                        result = ((num1 << rotateLeftValue) | (num1 >>> (bitLength - rotateLeftValue))) >>> 0;
+                        description = `ROL ${input1} (Base ${base1}), ${rotateLeftValue} bits`;
+                        break;
+                    case 'ROTATE_RIGHT':
+                        const rotateRight = prompt('Enter number of bits to rotate right:', '1');
+                        if (rotateRight === null) return;
+                        const rotateRightValue = parseInt(rotateRight);
+                        // Implement bit rotation
+                        const bitLength2 = 32; // Assume 32-bit integers
+                        result = ((num1 >>> rotateRightValue) | (num1 << (bitLength2 - rotateRightValue))) >>> 0;
+                        description = `ROR ${input1} (Base ${base1}), ${rotateRightValue} bits`;
+                        break;
+                    default:
+                        // Binary operations (AND, OR, XOR)
+                        const input2 = bitwiseInput2El.value.trim();
+                        if (!input2) {
+                            showNotification('Please enter the second number for binary operations', 'error');
+                            return;
+                        }
+                        
+                        const base2 = parseInt(document.getElementById('bitwiseBase2').value);
+                        const num2 = parseInt(input2, base2);
+                        
+                        if (isNaN(num2)) {
+                            showNotification('Invalid second number', 'error');
+                            return;
+                        }
+                        
+                        if (operation === 'AND') {
+                            result = num1 & num2;
+                            description = `${input1} (Base ${base1}) AND ${input2} (Base ${base2})`;
+                        } else if (operation === 'OR') {
+                            result = num1 | num2;
+                            description = `${input1} (Base ${base1}) OR ${input2} (Base ${base2})`;
+                        } else if (operation === 'XOR') {
+                            result = num1 ^ num2;
+                            description = `${input1} (Base ${base1}) XOR ${input2} (Base ${base2})`;
+                        }
+                }
+                
+                // Convert result to binary, decimal, and hex
+                const binaryResult = result.toString(2);
+                const decimalResult = result.toString(10);
+                const hexResult = result.toString(16).toUpperCase();
+                
+                // Apply digit grouping if enabled
+                const formattedBinary = settings.digitGrouping ? groupDigits(binaryResult, settings.digitGroupSize) : binaryResult;
+                const formattedHex = settings.digitGrouping ? groupDigits(hexResult, settings.digitGroupSize) : hexResult;
+                
+                // Format the output
+                const outputText = `${description}\n\nBinary: ${formattedBinary}\nDecimal: ${decimalResult}\nHexadecimal: ${formattedHex}`;
+                
+                // Display the result
+                if (settings.typingAnimation) {
+                    typeLineByLine(outputText, 'bitwiseOutput');
+                } else {
+                    bitwiseOutputEl.textContent = outputText;
+                }
+                
+                // Show bit visualization if enabled
+                if (settings.bitVisualization) {
+                    visualizeBits(result, 'bitwiseVisualization');
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(description, 'bitwise', decimalResult, 10);
+                }
+                
+            } catch (error) {
+                showNotification('Bitwise operation error: ' + error.message, 'error');
+            }
+        }
+
+        // ASCII/Unicode functions
+        function convertToASCII() {
+            try {
+                const input = asciiInputEl.value;
+                if (!input) {
+                    showNotification('Please enter text', 'error');
+                    return;
+                }
+                
+                let result = '';
+                for (let i = 0; i < input.length; i++) {
+                    result += input.charCodeAt(i);
+                    if (i < input.length - 1) result += ' ';
+                }
+                
+                if (settings.typingAnimation) {
+                    typeLineByLine(`ASCII: ${result}`, 'asciiOutput');
+                } else {
+                    asciiOutputEl.textContent = `ASCII: ${result}`;
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(input, 'text', result, 'ASCII');
+                }
+                
+            } catch (error) {
+                showNotification('Conversion error: ' + error.message, 'error');
+            }
+        }
+
+        function convertFromASCII() {
+            try {
+                const input = asciiInputEl.value;
+                if (!input) {
+                    showNotification('Please enter ASCII codes', 'error');
+                    return;
+                }
+                
+                const codes = input.split(/\s+/);
+                let result = '';
+                
+                for (const code of codes) {
+                    const charCode = parseInt(code);
+                    if (isNaN(charCode)) {
+                        showNotification('Invalid ASCII code: ' + code, 'error');
+                        return;
+                    }
+                    result += String.fromCharCode(charCode);
+                }
+                
+                if (settings.typingAnimation) {
+                    typeLineByLine(`Text: ${result}`, 'asciiOutput');
+                } else {
+                    asciiOutputEl.textContent = `Text: ${result}`;
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(input, 'ASCII', result, 'text');
+                }
+                
+            } catch (error) {
+                showNotification('Conversion error: ' + error.message, 'error');
+            }
+        }
+
+        function convertToUnicode() {
+            try {
+                const input = asciiInputEl.value;
+                if (!input) {
+                    showNotification('Please enter text', 'error');
+                    return;
+                }
+                
+                let result = '';
+                for (let i = 0; i < input.length; i++) {
+                    const hex = input.charCodeAt(i).toString(16).toUpperCase();
+                    result += 'U+' + '0'.repeat(4 - hex.length) + hex;
+                    if (i < input.length - 1) result += ' ';
+                }
+                
+                if (settings.typingAnimation) {
+                    typeLineByLine(`Unicode: ${result}`, 'asciiOutput');
+                } else {
+                    asciiOutputEl.textContent = `Unicode: ${result}`;
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(input, 'text', result, 'Unicode');
+                }
+                
+            } catch (error) {
+                showNotification('Conversion error: ' + error.message, 'error');
+            }
+        }
+
+        function convertFromUnicode() {
+            try {
+                const input = asciiInputEl.value;
+                if (!input) {
+                    showNotification('Please enter Unicode code points', 'error');
+                    return;
+                }
+                
+                // Support formats like U+0041 U+0042 or 0041 0042
+                const codePoints = input.split(/\s+/);
+                let result = '';
+                
+                for (let codePoint of codePoints) {
+                    // Remove U+ prefix if present
+                    if (codePoint.startsWith('U+')) {
+                        codePoint = codePoint.substring(2);
+                    }
+                    
+                    const charCode = parseInt(codePoint, 16);
+                    if (isNaN(charCode)) {
+                        showNotification('Invalid Unicode code point: ' + codePoint, 'error');
+                        return;
+                    }
+                    result += String.fromCodePoint(charCode);
+                }
+                
+                if (settings.typingAnimation) {
+                    typeLineByLine(`Text: ${result}`, 'asciiOutput');
+                } else {
+                    asciiOutputEl.textContent = `Text: ${result}`;
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(input, 'Unicode', result, 'text');
+                }
+                
+            } catch (error) {
+                showNotification('Conversion error: ' + error.message, 'error');
+            }
+        }
+
+        function populateASCIITable() {
+            charTableEl.innerHTML = '';
+            
+            // Show printable ASCII characters (32-126)
+            for (let i = 32; i <= 126; i++) {
+                const charItem = document.createElement('div');
+                charItem.className = 'char-item';
+                
+                const charDisplay = document.createElement('div');
+                charDisplay.className = 'char-display';
+                charDisplay.textContent = String.fromCharCode(i);
+                
+                const charCode = document.createElement('div');
+                charCode.className = 'char-code';
+                charCode.textContent = i;
+                
+                charItem.appendChild(charDisplay);
+                charItem.appendChild(charCode);
+                
+                // Add click event to use this character
+                charItem.addEventListener('click', () => {
+                    asciiInputEl.value += String.fromCharCode(i);
+                });
+                
+                charTableEl.appendChild(charItem);
+            }
+        }
+
+        // Floating point functions
+        function analyzeFloat(type) {
+            try {
+                const input = floatInputEl.value;
+                if (!input) {
+                    showNotification('Please enter a floating point number', 'error');
+                    return;
+                }
+                
+                const num = parseFloat(input);
+                if (isNaN(num)) {
+                    showNotification('Invalid floating point number', 'error');
+                    return;
+                }
+                
+                let buffer, view, bits, binaryStr;
+                
+                if (type === 'float32') {
+                    buffer = new ArrayBuffer(4);
+                    view = new DataView(buffer);
+                    view.setFloat32(0, num);
+                    bits = view.getUint32(0);
+                    binaryStr = bits.toString(2).padStart(32, '0');
+                    
+                    // Extract parts
+                    const sign = binaryStr.substring(0, 1);
+                    const exponent = binaryStr.substring(1, 9);
+                    const mantissa = binaryStr.substring(9);
+                    
+                    // Calculate actual values
+                    const signValue = sign === '0' ? '+' : '-';
+                    const exponentValue = parseInt(exponent, 2) - 127;
+                    const mantissaValue = '1.' + mantissa;
+                    
+                    const result = `IEEE 754 Single Precision (32-bit) Analysis:
+Sign: ${sign} (${signValue})
+Exponent: ${exponent} (${exponentValue})
+Mantissa: ${mantissa}
+Value: ${signValue}${mantissaValue} × 2^${exponentValue}`;
+                    
+                    if (settings.typingAnimation) {
+                        typeLineByLine(result, 'floatOutput');
+                    } else {
+                        floatOutputEl.textContent = result;
+                    }
+                    
+                    // Visualize the floating point representation
+                    visualizeFloatingPoint(sign, exponent, mantissa, 'fpVisualization');
+                    
+                } else if (type === 'float64') {
+                    buffer = new ArrayBuffer(8);
+                    view = new DataView(buffer);
+                    view.setFloat64(0, num);
+                    
+                    // Get the bits as two 32-bit integers
+                    const highBits = view.getUint32(0).toString(2).padStart(32, '0');
+                    const lowBits = view.getUint32(4).toString(2).padStart(32, '0');
+                    binaryStr = highBits + lowBits;
+                    
+                    // Extract parts
+                    const sign = binaryStr.substring(0, 1);
+                    const exponent = binaryStr.substring(1, 12);
+                    const mantissa = binaryStr.substring(12);
+                    
+                    // Calculate actual values
+                    const signValue = sign === '0' ? '+' : '-';
+                    const exponentValue = parseInt(exponent, 2) - 1023;
+                    const mantissaValue = '1.' + mantissa;
+                    
+                    const result = `IEEE 754 Double Precision (64-bit) Analysis:
+Sign: ${sign} (${signValue})
+Exponent: ${exponent} (${exponentValue})
+Mantissa: ${mantissa}
+Value: ${signValue}${mantissaValue} × 2^${exponentValue}`;
+                    
+                    if (settings.typingAnimation) {
+                        typeLineByLine(result, 'floatOutput');
+                    } else {
+                        floatOutputEl.textContent = result;
+                    }
+                    
+                    // Visualize the floating point representation
+                    visualizeFloatingPoint(sign, exponent, mantissa, 'fpVisualization');
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(input, 'float', binaryStr, type);
+                }
+                
+            } catch (error) {
+                showNotification('Floating point analysis error: ' + error.message, 'error');
+            }
+        }
+
+        function visualizeFloatingPoint(sign, exponent, mantissa, elementId) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            
+            // Create visualization container
+            const container = document.createElement('div');
+            container.className = 'fp-visualization';
+            
+            // Sign part
+            const signPart = document.createElement('div');
+            signPart.className = 'fp-part';
+            
+            const signLabel = document.createElement('div');
+            signLabel.className = 'fp-label';
+            signLabel.textContent = 'Sign';
+            
+            const signBits = document.createElement('div');
+            signBits.className = 'fp-bits';
+            
+            const signBit = document.createElement('div');
+            signBit.className = 'fp-bit fp-sign';
+            signBit.textContent = sign;
+            signBits.appendChild(signBit);
+            
+            signPart.appendChild(signLabel);
+            signPart.appendChild(signBits);
+            container.appendChild(signPart);
+            
+            // Exponent part
+            const exponentPart = document.createElement('div');
+            exponentPart.className = 'fp-part';
+            
+            const exponentLabel = document.createElement('div');
+            exponentLabel.className = 'fp-label';
+            exponentLabel.textContent = 'Exponent';
+            
+            const exponentBits = document.createElement('div');
+            exponentBits.className = 'fp-bits';
+            
+            for (let i = 0; i < exponent.length; i++) {
+                const bit = document.createElement('div');
+                bit.className = 'fp-bit fp-exponent';
+                bit.textContent = exponent[i];
+                exponentBits.appendChild(bit);
+            }
+            
+            exponentPart.appendChild(exponentLabel);
+            exponentPart.appendChild(exponentBits);
+            container.appendChild(exponentPart);
+            
+            // Mantissa part
+            const mantissaPart = document.createElement('div');
+            mantissaPart.className = 'fp-part';
+            
+            const mantissaLabel = document.createElement('div');
+            mantissaLabel.className = 'fp-label';
+            mantissaLabel.textContent = 'Mantissa';
+            
+            const mantissaBits = document.createElement('div');
+            mantissaBits.className = 'fp-bits';
+            
+            // Only show first 23 bits of mantissa to avoid overflow
+            const displayMantissa = mantissa.substring(0, 23);
+            
+            for (let i = 0; i < displayMantissa.length; i++) {
+                const bit = document.createElement('div');
+                bit.className = 'fp-bit fp-mantissa';
+                bit.textContent = displayMantissa[i];
+                mantissaBits.appendChild(bit);
+            }
+            
+            mantissaPart.appendChild(mantissaLabel);
+            mantissaPart.appendChild(mantissaBits);
+            container.appendChild(mantissaPart);
+            
+            element.appendChild(container);
+        }
+
+        // Unit conversion functions
+        function convertUnit() {
+            try {
+                const input = unitInputEl.value;
+                if (!input) {
+                    showNotification('Please enter a value', 'error');
+                    return;
+                }
+                
+                const value = parseFloat(input);
+                if (isNaN(value)) {
+                    showNotification('Invalid number', 'error');
+                    return;
+                }
+                
+                const fromUnit = fromUnitEl.value;
+                const toUnit = toUnitEl.value;
+                
+                // Convert to bits first (common base unit)
+                let bitsValue;
+                
+                // Data storage units
+                if (fromUnit === 'bit') bitsValue = value;
+                else if (fromUnit === 'byte') bitsValue = value * 8;
+                else if (fromUnit === 'kilobyte') bitsValue = value * 8 * 1024;
+                else if (fromUnit === 'megabyte') bitsValue = value * 8 * 1024 * 1024;
+                else if (fromUnit === 'gigabyte') bitsValue = value * 8 * 1024 * 1024 * 1024;
+                else if (fromUnit === 'terabyte') bitsValue = value * 8 * 1024 * 1024 * 1024 * 1024;
+                
+                // Data transfer units
+                else if (fromUnit === 'bps') bitsValue = value;
+                else if (fromUnit === 'kbps') bitsValue = value * 1000;
+                else if (fromUnit === 'mbps') bitsValue = value * 1000 * 1000;
+                else if (fromUnit === 'gbps') bitsValue = value * 1000 * 1000 * 1000;
+                
+                // Convert from bits to target unit
+                let result;
+                
+                // Data storage units
+                if (toUnit === 'bit') result = bitsValue;
+                else if (toUnit === 'byte') result = bitsValue / 8;
+                else if (toUnit === 'kilobyte') result = bitsValue / (8 * 1024);
+                else if (toUnit === 'megabyte') result = bitsValue / (8 * 1024 * 1024);
+                else if (toUnit === 'gigabyte') result = bitsValue / (8 * 1024 * 1024 * 1024);
+                else if (toUnit === 'terabyte') result = bitsValue / (8 * 1024 * 1024 * 1024 * 1024);
+                
+                // Data transfer units
+                else if (toUnit === 'bps') result = bitsValue;
+                else if (toUnit === 'kbps') result = bitsValue / 1000;
+                else if (toUnit === 'mbps') result = bitsValue / (1000 * 1000);
+                else if (toUnit === 'gbps') result = bitsValue / (1000 * 1000 * 1000);
+                
+                // Format the result
+                const formattedResult = `${value} ${getUnitFullName(fromUnit)} = ${result.toLocaleString(undefined, { maximumFractionDigits: 10 })} ${getUnitFullName(toUnit)}`;
+                
+                if (settings.typingAnimation) {
+                    typeLineByLine(formattedResult, 'unitOutput');
+                } else {
+                    unitOutputEl.textContent = formattedResult;
+                }
+                
+                // Add to history
+                if (settings.saveHistory) {
+                    addToHistory(`${value} ${fromUnit}`, 'unit', `${result} ${toUnit}`, 'conversion');
+                }
+                
+            } catch (error) {
+                showNotification('Unit conversion error: ' + error.message, 'error');
+            }
+        }
+
+        function getUnitFullName(unit) {
+            switch (unit) {
+                case 'bit': return 'bits';
+                case 'byte': return 'bytes';
+                case 'kilobyte': return 'kilobytes (KB)';
+                case 'megabyte': return 'megabytes (MB)';
+                case 'gigabyte': return 'gigabytes (GB)';
+                case 'terabyte': return 'terabytes (TB)';
+                case 'bps': return 'bits per second';
+                case 'kbps': return 'kilobits per second';
+                case 'mbps': return 'megabits per second';
+                case 'gbps': return 'gigabits per second';
+                default: return unit;
+            }
+        }
+
+        // Export functions
+        function updateExportPreview() {
+            const format = exportFormatEl.value;
+            const content = exportContentEl.value;
+            
+            let exportData;
+            
+            if (content === 'current') {
+                // Get current result from active tab
+                const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+                let currentResult;
+                
+                if (activeTab === 'converter') currentResult = outputEl.textContent;
+                else if (activeTab === 'calculator') currentResult = calcOutputEl.textContent;
+                else if (activeTab === 'bitwise') currentResult = bitwiseOutputEl.textContent;
+                else if (activeTab === 'ascii') currentResult = asciiOutputEl.textContent;
+                else if (activeTab === 'floating') currentResult = floatOutputEl.textContent;
+                else if (activeTab === 'units') currentResult = unitOutputEl.textContent;
+                
+                if (format === 'text') {
+                    exportData = currentResult;
+                } else if (format === 'json') {
+                    exportData = JSON.stringify({ result: currentResult }, null, 2);
+                } else if (format === 'csv') {
+                    exportData = 'Result\n' + currentResult.replace(/\n/g, ' ');
+                } else if (format === 'html') {
+                    exportData = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Base Converter Result</title>
+</head>
+<body>
+    <pre>${currentResult}</pre>
+</body>
+</html>`;
+                }
+            } else if (content === 'history') {
+                if (format === 'text') {
+                    exportData = conversionHistory.map(item => 
+                        `${item.timestamp}: ${item.input} (Base ${item.fromBase}) → ${item.result} (Base ${item.toBase})`
+                    ).join('\n');
+                } else if (format === 'json') {
+                    exportData = JSON.stringify(conversionHistory, null, 2);
+                } else if (format === 'csv') {
+                    exportData = 'Timestamp,Input,FromBase,Result,ToBase\n' + 
+                        conversionHistory.map(item => 
+                            `"${item.timestamp}","${item.input}","${item.fromBase}","${item.result}","${item.toBase}"`
+                        ).join('\n');
+                } else if (format === 'html') {
+                    exportData = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Base Converter History</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Conversion History</h1>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <th>Input</th>
+            <th>From Base</th>
+            <th>Result</th>
+            <th>To Base</th>
+        </tr>
+        ${conversionHistory.map(item => `
+        <tr>
+            <td>${item.timestamp}</td>
+            <td>${item.input}</td>
+            <td>${item.fromBase}</td>
+            <td>${item.result}</td>
+            <td>${item.toBase}</td>
+        </tr>`).join('')}
+    </table>
+</body>
+</html>`;
+                }
+            }
+            
+            exportPreviewEl.value = exportData;
+        }
+
+        function downloadExport() {
+            const format = exportFormatEl.value;
+            const content = exportContentEl.value;
+            
+            let filename;
+            if (content === 'current') {
+                filename = `base-converter-result.${getFileExtension(format)}`;
+            } else if (content === 'history') {
+                filename = `base-converter-history.${getFileExtension(format)}`;
+            }
+            
+            const blob = new Blob([exportPreviewEl.value], { type: getMimeType(format) });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('File downloaded', 'success');
+        }
+
+        function copyExport() {
+            navigator.clipboard.writeText(exportPreviewEl.value).then(() => {
+                showNotification('Copied to clipboard!', 'success');
+            }).catch(err => {
+                showNotification('Failed to copy: ' + err, 'error');
+            });
+        }
+
+        function getFileExtension(format) {
+            switch (format) {
+                case 'text': return 'txt';
+                case 'json': return 'json';
+                case 'csv': return 'csv';
+                case 'html': return 'html';
+                default: return 'txt';
+            }
+        }
+
+        function getMimeType(format) {
+            switch (format) {
+                case 'text': return 'text/plain';
+                case 'json': return 'application/json';
+                case 'csv': return 'text/csv';
+                case 'html': return 'text/html';
+                default: return 'text/plain';
+            }
+        }
+
+        function shareResults() {
+            // Get current result from active tab
+            const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+            let currentResult;
+            
+            if (activeTab === 'converter') currentResult = outputEl.textContent;
+            else if (activeTab === 'calculator') currentResult = calcOutputEl.textContent;
+            else if (activeTab === 'bitwise') currentResult = bitwiseOutputEl.textContent;
+            else if (activeTab === 'ascii') currentResult = asciiOutputEl.textContent;
+            else if (activeTab === 'floating') currentResult = floatOutputEl.textContent;
+            else if (activeTab === 'units') currentResult = unitOutputEl.textContent;
+            
+            // Use Web Share API if available
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Base Converter Result',
+                    text: currentResult
+                }).then(() => {
+                    showNotification('Shared successfully', 'success');
+                }).catch(err => {
+                    showNotification('Error sharing: ' + err, 'error');
+                });
+            } else {
+                // Fallback to clipboard
+                navigator.clipboard.writeText(currentResult).then(() => {
+                    showNotification('Copied to clipboard for sharing!', 'success');
+                }).catch(err => {
+                    showNotification('Failed to copy: ' + err, 'error');
+                });
+            }
+        }
+
+        // Initialize settings
+        applyTheme();
+        
+        // Export functions to global scope for HTML onclick handlers
+        window.convert = convert;
+        window.showCustomConversion = showCustomConversion;
+        window.clearInput = clearInput;
+        window.toggleGrouping = toggleGrouping;
+        window.removeHistoryItem = removeHistoryItem;
+        window.clearHistory = clearHistory;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.saveSettings = saveSettings;
+        window.resetSettings = resetSettings;
+        window.calculateExpression = calculateExpression;
+        window.appendToCalc = appendToCalc;
+        window.clearCalc = clearCalc;
+        window.bitwiseOperation = bitwiseOperation;
+        window.convertToASCII = convertToASCII;
+        window.convertFromASCII = convertFromASCII;
+        window.convertToUnicode = convertToUnicode;
+        window.convertFromUnicode = convertFromUnicode;
+        window.analyzeFloat = analyzeFloat;
+        window.convertUnit = convertUnit;
+        window.downloadExport = downloadExport;
+        window.copyExport = copyExport;
+    </script>
+</body>
+</html>
